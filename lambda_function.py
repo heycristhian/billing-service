@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import boto3
-import pytz
+import dateutil.tz
 
 
 def lambda_handler(event, context):
@@ -28,7 +28,7 @@ def lambda_handler(event, context):
 
 def get_dates():
     date_format = '%Y-%m-%d'
-    brazil_timezone = pytz.timezone('America/Sao_Paulo')
+    brazil_timezone = dateutil.tz.gettz('America/Sao_Paulo')
 
     current_date = datetime.now(brazil_timezone)
     last_month_date = current_date - timedelta(days=30)
