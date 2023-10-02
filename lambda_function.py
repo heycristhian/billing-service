@@ -1,12 +1,17 @@
+from datetime import datetime, timedelta
+
 import boto3
 
 
 def lambda_handler(event, context):
     client = boto3.client('ce', region_name='us-east-1')
+
+    current_date, last_month_date = get_dates()
+
     response = client.get_cost_and_usage(
         TimePeriod={
-            'Start': '2023-01-01',
-            'End': '2023-01-31'
+            'Start': last_month_date,
+            'End': current_date
         },
         Granularity='MONTHLY',
         Metrics=['UnblendedCost']
@@ -18,3 +23,11 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': f'O custo do mês atual é de ${cost}'
     }
+
+
+def get_dates():
+    date_format = '%Y-%m-%d'
+    current_date = datetime.now()
+    last_month_date = current_date - timedelta(days=30)
+
+    return current_date.strftime(date_format), last_month_date.strftime(date_format)
