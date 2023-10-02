@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 import boto3
 import dateutil.tz
+import math
 
 
 def lambda_handler(event, context):
@@ -19,15 +20,16 @@ def lambda_handler(event, context):
         Metrics=['UnblendedCost']
     )
 
-    cost = response['ResultsByTime'][0]['Total']['UnblendedCost']['Amount']
-    msg = f'O custo do mês atual é de ${cost}'
+    cost = round(response['ResultsByTime'][0]['Total']['UnblendedCost']['Amount'])
+
+    msg = f'AWS Billing: Previsão total do mês atual é de ${cost}'
 
     sns_response = send_sms(msg)
+    print(sns_response)
 
     return {
         'statusCode': 200,
-        'body': msg,
-        'snsResponse': sns_response
+        'body': msg
     }
 
 
