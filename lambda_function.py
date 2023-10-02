@@ -43,12 +43,10 @@ def get_dates():
 
 def send_sms(message: str):
     phone_number = os.environ['PHONE_NUMBER']
-    sns_topic_arn = os.environ['SNS_TOPIC_ARN']
 
     sns = boto3.client('sns')
 
     return sns.publish(
-        TopicArn=sns_topic_arn,
         PhoneNumber=phone_number,
         Message=message
     )
