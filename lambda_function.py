@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 
 import boto3
@@ -19,10 +20,14 @@ def lambda_handler(event, context):
     )
 
     cost = response['ResultsByTime'][0]['Total']['UnblendedCost']['Amount']
+    msg = f'O custo do mês atual é de ${cost}'
+
+    sns_response = send_sms(msg)
 
     return {
         'statusCode': 200,
-        'body': f'O custo do mês atual é de ${cost}'
+        'body': msg,
+        'snsResponse': sns_response
     }
 
 
@@ -34,3 +39,13 @@ def get_dates():
     last_month_date = current_date - timedelta(days=30)
 
     return current_date.strftime(date_format), last_month_date.strftime(date_format)
+
+
+def send_sms(message: str):
+    phone_number = os.environ['PHONE_NUMBER']
+    sns = boto3.client('sns')
+
+    return sns.publish(
+        PhoneNumber=phone_number,
+        Message=message
+    )
