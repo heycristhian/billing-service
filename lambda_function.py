@@ -23,8 +23,7 @@ def lambda_handler(event, context):
 
     msg = f'AWS Billing: Previsão total do mês atual é de ${cost}'
 
-    sns_response = send_sms(msg)
-    after_print(sns_response, last_month_date, current_date)
+    after_print(last_month_date, current_date)
 
     return {
         'statusCode': 200,
@@ -40,17 +39,6 @@ def get_dates():
     last_month_date = current_date - timedelta(days=30)
 
     return current_date.strftime(date_format), last_month_date.strftime(date_format)
-
-
-def send_sms(message: str):
-    phone_number = os.environ['PHONE_NUMBER']
-
-    sns = boto3.client('sns')
-
-    return sns.publish(
-        PhoneNumber=phone_number,
-        Message=message
-    )
 
 
 def after_print(sns_response, last_month_date, current_date):
