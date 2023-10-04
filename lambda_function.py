@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta
 
 import boto3
@@ -41,7 +40,6 @@ def get_dates():
     return current_date.strftime(date_format), last_month_date.strftime(date_format)
 
 
-def after_print(sns_response, last_month_date, current_date):
-    print('sns_response: ' + str(sns_response))
+def after_print(last_month_date, current_date):
     print('last_month_date: ' + str(last_month_date))
     print('current_date: ' + str(current_date))
