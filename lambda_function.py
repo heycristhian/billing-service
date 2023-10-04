@@ -22,7 +22,9 @@ def lambda_handler(event, context):
 
     msg = f'AWS Billing: Previsão total do mês atual é de ${cost}'
 
-    after_print(last_month_date, current_date)
+    send_email_response = send_email(msg)
+
+    after_print(last_month_date, current_date, send_email_response)
 
     return {
         'statusCode': 200,
@@ -40,6 +42,26 @@ def get_dates():
     return current_date.strftime(date_format), last_month_date.strftime(date_format)
 
 
-def after_print(last_month_date, current_date):
+def send_email(message):
+    ses = boto3.client('ses', region_name='us-east-1')
+    sender_email = 'heycristhian@gmail.com'
+    recipient_email = 'heycristhian@gmail.com'
+    subject = 'AWS BILLING'
+    body_html = f'<html><body><h1>{message}</h1></body></html>'
+
+    return ses.send_email(
+        Source=sender_email,
+        Destination={'ToAddresses': [recipient_email]},
+        Message={
+            'Subject': {'Data': subject},
+            'Body': {
+                'Html': {'Data': body_html}
+            }
+        }
+    )
+
+
+def after_print(last_month_date, current_date, send_email_response):
     print('last_month_date: ' + str(last_month_date))
     print('current_date: ' + str(current_date))
+    print('send_email_response: ' + str(send_email_response))
